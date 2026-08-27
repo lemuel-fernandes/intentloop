@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { Customer, CustomerEvent, Cart, PaymentAttempt } from '@prisma/client';
+import type { CustomerEvent, Cart, PaymentAttempt } from '@prisma/client';
 
 export const intentResultSchema = z.object({
   intent: z.enum(['DISCOVERY', 'PRODUCT_RESEARCH', 'PRODUCT_COMPARISON', 'PURCHASE_READY', 'PRICE_CONCERN', 'TRUST_CONCERN', 'DELIVERY_CONCERN', 'PRODUCT_FIT_CONCERN', 'STOCK_CONCERN', 'PAYMENT_PROBLEM', 'REFUND_OR_RETURN', 'SUPPORT_REQUEST', 'POST_PURCHASE', 'REENGAGEMENT', 'UNSUBSCRIBE', 'UNKNOWN']),
