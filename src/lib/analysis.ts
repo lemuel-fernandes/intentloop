@@ -24,7 +24,7 @@ export function classifyIntent(events: CustomerEvent[], cart?: Cart | null): Int
   else if (/compare|versus| or /.test(text)) { intent = 'PRODUCT_COMPARISON'; confidence = 0.8; action = 'RECOMMEND_PRODUCT'; }
   else if (/small desk|fit|size|compatible/.test(text)) { intent = 'PRODUCT_FIT_CONCERN'; confidence = 0.88; action = 'ANSWER_QUESTION'; }
   else if (cart?.status === 'OPEN' || /checkout|buy|purchase/.test(text)) { intent = 'PURCHASE_READY'; confidence = 0.78; action = 'SEND_PAYMENT_REMINDER'; }
-  else if (/view|browse|looking|learn/.test(text)) { intent = 'PRODUCT_RESEARCH'; confidence = 0.7; action = 'RECOMMEND_PRODUCT'; }
+  else if (/product_viewed|browse|looking|learn/.test(text)) { intent = 'PRODUCT_RESEARCH'; confidence = 0.7; action = 'RECOMMEND_PRODUCT'; }
   const evidence = events.slice(0, 3).map((event) => `${event.eventType}: ${event.eventData}`);
   if (confidence < 0.65) { intent = 'UNKNOWN'; action = 'REQUEST_MORE_INFORMATION'; }
   return intentResultSchema.parse({ intent, confidence, evidence, recommendedNextAction: action, needsHumanReview: intent === 'UNKNOWN', model: 'deterministic-signals-v1' });

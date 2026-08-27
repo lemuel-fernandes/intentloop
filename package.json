@@ -11,6 +11,7 @@
     "db:push": "prisma db push",
     "seed:demo": "tsx prisma/seed.ts",
     "reset:demo": "prisma db push --force-reset"
+    ,"test": "vitest run"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
