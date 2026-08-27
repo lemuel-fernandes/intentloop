@@ -115,6 +115,8 @@ model Cart {
   currency String @default("USD")
   abandonedAt DateTime?
   recoveredAt DateTime?
+  stripePaymentLinkId String?
+  stripePaymentLinkUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   customer Customer? @relation(fields: [customerId], references: [id])
