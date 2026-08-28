@@ -7,6 +7,17 @@ export const intentResultSchema = z.object({
 });
 export type IntentResult = z.infer<typeof intentResultSchema>;
 
+export async function classifyIntentWithProvider(events: CustomerEvent[], cart?: Cart | null): Promise<IntentResult> {
+  if (!process.env.OPENAI_API_KEY) return classifyIntent(events, cart);
+  const context = { events: events.map((event) => ({ type: event.eventType, data: event.eventData })), cart: cart ? { status: cart.status, total: cart.totalAmount, currency: cart.currency } : null };
+  const response = await fetch(`${process.env.OPENAI_BASE_URL ?? 'https://api.openai.com/v1'}/chat/completions`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.OPENAI_API_KEY}` }, body: JSON.stringify({ model: process.env.OPENAI_MODEL ?? 'gpt-4o-mini', temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'system', content: 'Classify intent only from the supplied customer context. Never invent evidence. If confidence is below 0.65 use UNKNOWN. Return JSON with intent, confidence, evidence, recommendedNextAction, needsHumanReview, model.' }, { role: 'user', content: JSON.stringify(context) }] }) });
+  if (!response.ok) throw new Error(`AI provider returned ${response.status}.`);
+  const payload = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
+  const content = payload.choices?.[0]?.message?.content;
+  if (!content) throw new Error('AI provider returned no structured result.');
+  return intentResultSchema.parse({ ...JSON.parse(content), model: process.env.OPENAI_MODEL ?? 'gpt-4o-mini' });
+}
+
 export const failureResultSchema = z.object({
   primaryReason: z.string(), secondaryReasons: z.array(z.string()), confidence: z.number().min(0).max(1), evidence: z.array(z.object({ source: z.string(), text: z.string() })), reasonType: z.enum(['CONFIRMED', 'INFERRED', 'UNKNOWN']), recommendedAction: z.string(),
 });
