@@ -1,0 +1,4 @@
+import Link from 'next/link';
+import { db } from '@/lib/db';
+
+export default async function AuditPage() { const logs = await db.auditLog.findMany({ orderBy: { createdAt: 'desc' }, take: 100 }); return <main className="content standalone"><header><div><p className="eyebrow">CONTROL PLANE / AUDIT</p><h1>Audit logs</h1><p className="muted">Every analysis and external action leaves a trace.</p></div><Link className="command" href="/">← Overview</Link></header><section className="panel">{logs.length ? logs.map(log => <div className="event-row" key={log.id}><span className="dot green" /><div><strong>{log.action}</strong><small>{log.actorType} · {log.targetType} {log.targetId ?? ''}</small></div><time>{new Date(log.createdAt).toLocaleString()}</time></div>) : <div className="empty"><span>∅</span><p>No audit entries yet.</p></div>}</section></main>; }

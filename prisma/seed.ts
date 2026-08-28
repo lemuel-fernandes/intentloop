@@ -30,7 +30,8 @@ async function main() {
   ] });
   await db.intentAnalysis.create({ data: { customerId: maya.id, intentType: IntentType.PRODUCT_FIT_CONCERN, confidence: 0.88, evidence: JSON.stringify(['Customer asked whether the lamp fits a small desk.', 'Customer viewed Aurora Desk Lamp.']), model: 'demo-deterministic-v1' } });
   await db.saleFailureAnalysis.create({ data: { customerId: theo.id, cartId: cart.id, primaryReason: 'PAYMENT_DECLINED', confidence: 0.99, reasonType: 'CONFIRMED', evidence: JSON.stringify([{ source: 'payment_provider', text: 'The test card was declined.' }]) } });
-  await db.knowledgeDocument.create({ data: { title: 'Demo Delivery Policy', documentType: 'DELIVERY_POLICY', source: 'demo seed', checksum: 'demo-delivery-v1', content: 'Standard delivery takes 3 to 5 business days. Express delivery is available at checkout.' } });
+  const deliveryContent = 'Standard delivery takes 3 to 5 business days. Express delivery is available at checkout.';
+  await db.knowledgeDocument.create({ data: { title: 'Demo Delivery Policy', documentType: 'DELIVERY_POLICY', source: 'demo seed', checksum: 'demo-delivery-v1', content: deliveryContent, chunks: { create: [{ content: deliveryContent }] } } });
   console.log('Seeded synthetic IntentLoop demo data.');
 }
 

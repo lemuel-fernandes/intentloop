@@ -9,6 +9,7 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: 'Invalid knowledge document', details: parsed.error.flatten() }, { status: 400 });
   const checksum = createHash('sha256').update(parsed.data.content).digest('hex');
   const chunks = parsed.data.content.split(/\n\s*\n/).map((content) => content.trim()).filter(Boolean);
+  if (chunks.length === 0) chunks.push(parsed.data.content.trim());
   const document = await db.knowledgeDocument.create({ data: { ...parsed.data, checksum, chunks: { create: chunks.map((content) => ({ content })) } }, include: { chunks: true } });
   return NextResponse.json({ document }, { status: 201 });
 }
