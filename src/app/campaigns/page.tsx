@@ -1,0 +1,4 @@
+import Link from 'next/link';
+import { db } from '@/lib/db';
+
+export default async function CampaignsPage() { const campaigns = await db.campaign.findMany({ orderBy: { updatedAt: 'desc' } }); return <main className="content standalone"><header><div><p className="eyebrow">GROWTH / CAMPAIGNS</p><h1>Campaigns</h1><p className="muted">Audience rules and message templates stored in the database.</p></div><Link className="command" href="/">← Overview</Link></header><section className="panel">{campaigns.length ? campaigns.map(campaign => <div className="customer-row" key={campaign.id}><strong>{campaign.name}</strong><span className="tag">{campaign.channel}</span><span>{campaign.status}</span><span>{new Date(campaign.updatedAt).toLocaleDateString()}</span><span>→</span></div>) : <div className="empty"><span>∅</span><p>No campaigns created.</p><small>Create campaigns through the API after defining an audience rule.</small></div>}</section></main>; }
